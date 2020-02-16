@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-const tdRegex = "<td rowspan=\"1\">(.*)</td>"
-const trOpenRegex = "<tr(.*)>"
-const trCloseRegex = "</tr>"
+const TD_REGEX = "<td(.*)>(.*)</td>"
+const TR_OPEN_REGEX = "<tr(.*)>"
+const TR_CLOSE_REGEX = "</tr>"
 
 func GerarCsv(arquivoEntrada, arquivoSaida string) {
 	file, err := os.Open(arquivoEntrada)
@@ -20,30 +20,33 @@ func GerarCsv(arquivoEntrada, arquivoSaida string) {
 	scanner := bufio.NewScanner(file)
 	matchTrOpen := false
 	matchTrClose := false
-	matchTd := regexp.MustCompile(tdRegex)
+	matchTd := regexp.MustCompile(TD_REGEX)
+	linha := ""
 	texto := ""
 	colunas := 0
 	for scanner.Scan() {
 		if !matchTrOpen {
-			matchTrOpen, _ = regexp.MatchString(trOpenRegex, scanner.Text())
+			matchTrOpen, _ = regexp.MatchString(TR_OPEN_REGEX, scanner.Text())
 		}
 		valores := matchTd.FindStringSubmatch(scanner.Text())
 		if matchTrOpen && len(valores) > 0 && colunas < 8 {
 			// verifica se o valor é uma da
-			data, err := time.Parse("02/01/2006", valores[1])
+			data, err := time.Parse("02/01/2006", valores[2])
 			if err != nil {
-				texto += valores[1] + ";"
+				linha += valores[2] + ";"
 			} else {
-				texto += data.Format("2006-01-02") + ";"
+				linha += data.Format("2006-01-02") + ";"
 			}
 			colunas++
 		}
 
-		matchTrClose, _ = regexp.MatchString(trCloseRegex, scanner.Text())
+		matchTrClose, _ = regexp.MatchString(TR_CLOSE_REGEX, scanner.Text())
 		if matchTrClose {
-			if colunas > 0 {
-				texto += "\n"
+			match, _ := regexp.MatchString("([0-9]+);[.]*", linha)
+			if colunas > 0 && match {
+				texto += linha + "\n"
 			}
+			linha = ""
 			colunas = 0
 			matchTrOpen = false
 			matchTrClose = false
