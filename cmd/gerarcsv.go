@@ -11,6 +11,10 @@ import (
 const TD_REGEX = "<td(.*)>(.*)</td>"
 const TR_OPEN_REGEX = "<tr(.*)>"
 const TR_CLOSE_REGEX = "</tr>"
+const MAX_COL = 10
+const LINHA_REGEX = "([0-9]+);[.]*"
+const DATA_SQL_PATTERN = "2006-01-02"
+const DIA_MES_ANO_PATTERN = "02/01/2006"
 
 func GerarCsv(arquivoEntrada, arquivoSaida string) {
 	file, err := os.Open(arquivoEntrada)
@@ -29,20 +33,25 @@ func GerarCsv(arquivoEntrada, arquivoSaida string) {
 			matchTrOpen, _ = regexp.MatchString(TR_OPEN_REGEX, scanner.Text())
 		}
 		valores := matchTd.FindStringSubmatch(scanner.Text())
-		if matchTrOpen && len(valores) > 0 && colunas < 8 {
+		if matchTrOpen && len(valores) > 0 && colunas < MAX_COL {
+			colunas++
+			if colunas == 8 { // coluna de arrecadacao
+				continue
+			}
+
 			// verifica se o valor é uma da
-			data, err := time.Parse("02/01/2006", valores[2])
+			data, err := time.Parse(DIA_MES_ANO_PATTERN, valores[2])
 			if err != nil {
 				linha += valores[2] + ";"
 			} else {
-				linha += data.Format("2006-01-02") + ";"
+				linha += data.Format(DATA_SQL_PATTERN) + ";"
 			}
-			colunas++
+
 		}
 
 		matchTrClose, _ = regexp.MatchString(TR_CLOSE_REGEX, scanner.Text())
 		if matchTrClose {
-			match, _ := regexp.MatchString("([0-9]+);[.]*", linha)
+			match, _ := regexp.MatchString(LINHA_REGEX, linha)
 			if colunas > 0 && match {
 				texto += linha + "\n"
 			}

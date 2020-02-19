@@ -7,8 +7,13 @@ import (
 	"os"
 )
 
+const FOLDER = "arquivos"
+
 func GravarArquivo(name string, data []byte) {
-	output, err := os.Create("arquivos/" + name)
+	if _, err := os.Stat(FOLDER); os.IsNotExist(err) {
+		os.Mkdir(FOLDER, 0755) //
+	}
+	output, err := os.Create(FOLDER + "/" + name)
 	TratarErro("Nao foi possivel criar o arquivo de saida: ", err)
 	defer output.Close()
 

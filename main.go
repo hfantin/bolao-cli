@@ -49,9 +49,9 @@ func executarComando(opcao int) {
 		jogos := exibirPrompt("Informe a quantidade de jogos")
 		cmd.GerarDezenas(dezenas, jogos)
 	case 9:
-		fmt.Println("beleza campeão!")
+		fmt.Println("Falou campeão!")
 	default:
-		fmt.Printf("Não existe a opção %s, fui\n.", opcao)
+		fmt.Printf("Não existe a opção %v!\n.", opcao)
 	}
 }
 func validar(input string) error {
