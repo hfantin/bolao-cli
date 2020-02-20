@@ -35,7 +35,7 @@ func GerarCsv(arquivoEntrada, arquivoSaida string) {
 		valores := matchTd.FindStringSubmatch(scanner.Text())
 		if matchTrOpen && len(valores) > 0 && colunas < MAX_COL {
 			colunas++
-			if colunas == 8 { // coluna de arrecadacao
+			if colunas == 9 { // coluna de arrecadacao
 				continue
 			}
 
