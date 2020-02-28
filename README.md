@@ -22,3 +22,7 @@ go mod init github.com/hfantin/bolao-cli
 
 [promptui](https://github.com/manifoldco/promptui)
 [code overview](https://golang.org/doc/code.html#Overview)
+
+### problemas com o caractere abaixo
+"�" \uFFFD - replacement char
+tentar strings.ToValidUTF8("a\xc5z", "")
