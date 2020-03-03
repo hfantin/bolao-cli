@@ -53,7 +53,7 @@ func GerarCsv(arquivoEntrada, arquivoSaida string) {
 		if matchTrClose {
 			match, _ := regexp.MatchString(LINHA_REGEX, linha)
 			if colunas > 0 && match {
-				texto += linha + "\n"
+				texto += linha[:len(linha)-1] + "\n"
 			}
 			linha = ""
 			colunas = 0
